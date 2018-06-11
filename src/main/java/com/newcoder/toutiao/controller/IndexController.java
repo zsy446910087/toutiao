@@ -1,8 +1,11 @@
 package com.newcoder.toutiao.controller;
 
 
+import com.newcoder.toutiao.aspect.LogAspect;
 import com.newcoder.toutiao.model.User;
 import com.newcoder.toutiao.service.ToutiaoService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -22,14 +25,18 @@ import java.util.*;
  */
 @Controller
 public class IndexController {
+    private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
+
     @Autowired
     private ToutiaoService toutiaoService;
     @RequestMapping(path = {"/", "/index"})
     @ResponseBody
     public String index(HttpSession session) {
 
-        toutiaoService.say();
-        return "Hello NowCoder," + session.getAttribute("msg") + "<br> Say:" + toutiaoService.say();
+        // toutiaoService.say();
+        logger.info("Visit index");
+        return "Hello NowCoder," + session.getAttribute("msg")
+                + "<br> Say:" + toutiaoService.say();
     }
 
     @RequestMapping(value = {"/profile/{groupId}/{userId}"})

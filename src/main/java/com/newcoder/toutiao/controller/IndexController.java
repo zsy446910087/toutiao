@@ -2,9 +2,13 @@ package com.newcoder.toutiao.controller;
 
 
 import com.newcoder.toutiao.model.User;
+import com.newcoder.toutiao.service.ToutiaoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -18,10 +22,14 @@ import java.util.*;
  */
 @Controller
 public class IndexController {
+    @Autowired
+    private ToutiaoService toutiaoService;
     @RequestMapping(path = {"/", "/index"})
     @ResponseBody
-    public String index() {
-        return "Hello NowCoder";
+    public String index(HttpSession session) {
+
+        toutiaoService.say();
+        return "Hello NowCoder," + session.getAttribute("msg") + "<br> Say:" + toutiaoService.say();
     }
 
     @RequestMapping(value = {"/profile/{groupId}/{userId}"})
@@ -85,5 +93,31 @@ public class IndexController {
         response.addHeader(key, value);
         return "NowCoderID From Cookie:" + nowcoderID;
 
+    }
+
+    @RequestMapping(value = {"/redirect/{code}"})
+    public RedirectView redirecct(@PathVariable("code") int code,
+                                  HttpSession session) {
+        RedirectView red = new RedirectView("/", true);
+        if (code == 301) {
+            red.setStatusCode(HttpStatus.MOVED_PERMANENTLY);
+        }
+        session.setAttribute("msg", "Jump from redirect");
+        return red;
+    }
+
+    @RequestMapping("/admin")
+    @ResponseBody
+    public String admin(@RequestParam(value = "key", required = false) String key) {
+        if ("admin".equals(key)) {
+            return "Hello admin";
+        }
+        throw new IllegalArgumentException(("key 错误"));
+    }
+
+    @ExceptionHandler()
+    @ResponseBody
+    public String error(Exception e) {
+        return "error:" + e.getMessage();
     }
 }

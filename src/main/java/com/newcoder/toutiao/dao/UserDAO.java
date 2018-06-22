@@ -2,12 +2,14 @@ package com.newcoder.toutiao.dao;
 
 import com.newcoder.toutiao.model.User;
 import org.apache.ibatis.annotations.*;
+import org.springframework.stereotype.Repository;
 
 
 /**
  * @Author:Siyu
  * @Date:Created in 下午5:31 2018/6/21
  */
+
 @Mapper
 public interface UserDAO {
     String TABLE_NAME = "user";
